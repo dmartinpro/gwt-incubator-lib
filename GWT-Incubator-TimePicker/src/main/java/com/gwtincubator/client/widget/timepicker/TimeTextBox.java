@@ -33,6 +33,8 @@ import com.gwtincubator.client.event.PropertyChangeSource;
 	}
 
 	private void init() {
+		this.setMaxLength(10);
+		this.setVisibleLength(10);
 		this.unsinkEvents(Event.ONCLICK | Event.MOUSEEVENTS);
 		sinkEvents(Event.ONCLICK | Event.MOUSEEVENTS);
 	}
@@ -48,8 +50,7 @@ import com.gwtincubator.client.event.PropertyChangeSource;
 			text.append("0");
 		}
 		text.append(minute);
-
-		this.setText(text.toString());
+		setText(text.toString());
 	}
 
 	public void addMouseListener(final MouseListener listener) {
@@ -63,15 +64,15 @@ import com.gwtincubator.client.event.PropertyChangeSource;
 	public void onBrowserEvent(final Event event) {
 		super.onBrowserEvent(event);
 		switch (DOM.eventGetType(event)) {
-		case Event.ONMOUSEDOWN:
-		case Event.ONMOUSEUP:
-		case Event.ONMOUSEMOVE:
-		case Event.ONMOUSEOVER: {
-			if (mouseListeners != null)
-				mouseListeners.fireMouseEvent(this, event);
-			break;
-		}
-		case Event.ONMOUSEOUT:
+			case Event.ONMOUSEDOWN:
+			case Event.ONMOUSEUP:
+			case Event.ONMOUSEMOVE:
+			case Event.ONMOUSEOVER: {
+				if (mouseListeners != null)
+					mouseListeners.fireMouseEvent(this, event);
+				break;
+			}
+			case Event.ONMOUSEOUT:
 		}
 	}
 

@@ -1,4 +1,4 @@
-.TimePicker, .TimePickerTextField, .TimePickerLabel, .TimePickerPopup, .TimePickerSeparator, .TimePickerPopupButton, .TimePickerPopupLabel, .TimePickerPopupRadioButton {
+.TimePicker, .TimePickerTextField, .TimePickerLabel, .TimePickerPopup {
 	color:#0d87cd;
 	font-family:Arial;
 	font-size:9pt;
@@ -12,14 +12,10 @@
 .TimePickerLabel {
 }
 .TimePickerTextField {
-	background: #ffffff url('resize-handle.gif') no-repeat right;
+	background: white url('resize-handle.gif') no-repeat right;
 }
 .TimePickerPopup {
-	background-color: lightgray;
-}
-.TimePickerPopupButton {
-}
-.TimePickerPopupLabel {
+	background-color: white;
 }
 .timeButton-focus {
 	font-weight:bold;

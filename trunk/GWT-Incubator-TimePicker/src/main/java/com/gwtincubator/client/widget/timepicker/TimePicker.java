@@ -124,7 +124,6 @@ public class TimePicker extends Composite implements ClickListener, PropertyChan
 	protected TimeTextBox getTimeTextBox() {
 		if (timeTextBox == null) {
 			timeTextBox = new TimeTextBox();
-			timeTextBox.setMaxLength(5);
 			timeTextBox.setWidth("60px");
 			timeTextBox.addStyleName("TimePickerTextField");
 			final TextFieldFocusListener listener = new TextFieldFocusListener();
@@ -463,7 +462,6 @@ public class TimePicker extends Composite implements ClickListener, PropertyChan
 				}
 			}
 			final TimeButton bt = getHourButtons()[getState().getAbsoluteHourIndex()];
-			Window.alert(""+getState().getAbsoluteHourIndex());
 			bt.addStyleName("timeButton-focus");
 		}
 

@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <!-- 	<parent>
+  <groupId>com.gwtincubator</groupId>
+  <artifactId>gwt-incubator</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+</parent>-->
+<groupId>com.gwtincubator</groupId>
+<artifactId>gwt-incubator-security</artifactId>
+<version>1.0.0-SNAPSHOT</version>
+<name>G.W.T - Security</name>
+<packaging>jar</packaging>
+<pluginRepositories>
+  <pluginRepository>
+    <id>maven2-repository.dev.java.net</id>
+    <name>Java.net Maven 2 Repository</name>
+    <url>http://download.java.net/maven/2</url>
+  </pluginRepository>
+  <pluginRepository>
+    <id>snapshots-codehaus-repo</id>
+    <name>Snapshot Codehaus Repository</name>
+    <url>http://snapshots.repository.codehaus.org</url>
+  </pluginRepository>
+  <pluginRepository>
+    <id>gwt-maven</id>
+    <url>http://gwt-maven.googlecode.com/svn/trunk/mavenrepo/</url>
+  </pluginRepository>
+  <pluginRepository>
+    <id>gwt-maven-plugins</id>
+    <url>http://gwt-maven.googlecode.com/svn/trunk/mavenrepo/</url>
+  </pluginRepository>
+</pluginRepositories>
+<repositories>
+  <repository>
+    <id>gwt-maven</id>
+    <url>http://gwt-maven.googlecode.com/svn/trunk/mavenrepo/</url>
+  </repository>
+  <repository>
+    <id>codehaus</id>
+    <url>http://repository.codehaus.org/</url>
+  </repository>
+  <repository>
+    <id>jboss</id>
+    <url>http://repository.jboss.com/maven2/</url>
+  </repository>
+  <repository>
+    <id>hippocms</id>
+    <url>http://repository.hippocms.org/maven2</url>
+  </repository>
+  <repository>
+    <id>apache-snapshots</id>
+    <name>Apache SNAPSHOT Repository</name>
+    <url>http://people.apache.org/repo/m2-snapshot-repository/</url>
+    <snapshots>
+      <enabled>true</enabled>
+    </snapshots>
+  </repository>
+  <repository>
+    <id>apache-incubating</id>
+    <name>Apache Incubating Repository</name>
+    <url>http://people.apache.org/repo/m2-incubating-repository/</url>
+  </repository>
+  <repository>
+    <id>maven2-repository.dev.java.net</id>
+    <name>Java.net Maven 2 Repository</name>
+    <url>http://download.java.net/maven/2</url>
+  </repository>
+  <repository>
+    <id>maven-repository.dev.java.net (legacy)</id>
+    <url>http://download.java.net/maven/1/</url>
+    <layout>legacy</layout>
+  </repository>
+</repositories>
+<build>
+  <pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <debug>false</debug>
+          <encoding>ISO-8859-15</encoding>
+          <fork>false</fork>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <configuration>
+          <encoding>ISO-8859-15</encoding>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <version>2.0-beta-6</version>
+        <configuration>
+          <locales>fr_FR</locales>
+          <inputEncoding>ISO-8859-15</inputEncoding>
+          <outputEncoding>ISO-8859-15</outputEncoding>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <forkMode>once</forkMode>
+        </configuration>
+      </plugin>
+    </plugins>
+  </pluginManagement>
+  <resources>
+    <resource>
+      <directory>src/main/java</directory>
+    </resource>
+    <resource>
+      <directory>src/main/resources</directory>
+    </resource>
+  </resources>
+  <plugins>
+    <plugin>
+      <artifactId>maven-jar-plugin</artifactId>
+      <version>2.2</version>
+      <configuration>
+        <archive>
+          <manifest>
+            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+          </manifest>
+          <manifestEntries>
+            <version>${project.version}</version>
+          </manifestEntries>
+        </archive>
+      </configuration>
+    </plugin>
+  </plugins>
+</build>
+<dependencies>
+  <dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring</artifactId>
+    <version>2.5.6</version>
+  </dependency>
+  <dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-core</artifactId>
+    <version>2.5.6</version>
+  </dependency>
+  <dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-context</artifactId>
+    <version>2.5.6</version>
+  </dependency>
+  <dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-webmvc</artifactId>
+    <version>2.5.6</version>
+  </dependency>
+  <dependency>
+    <groupId>org.springframework.security</groupId>
+    <artifactId>spring-security-core</artifactId>
+    <version>2.0.4</version>
+  </dependency>
+  <dependency>
+    <groupId>org.springframework.security</groupId>
+    <artifactId>spring-security-core-tiger</artifactId>
+    <version>2.0.4</version>
+  </dependency>
+  <dependency>
+    <groupId>net.entropysoft.transmorph</groupId>
+    <artifactId>transmorph</artifactId>
+    <version>2.0.0</version>
+  </dependency>
+  <dependency>
+    <groupId>com.google.gwt</groupId>
+    <artifactId>gwt-user</artifactId>
+    <version>1.5.3</version>
+  </dependency>
+  <dependency>
+    <groupId>com.google.gwt</groupId>
+    <artifactId>gwt-servlet</artifactId>
+    <version>1.5.3</version>
+  </dependency>
+  <dependency>
+    <groupId>org.gwt.sl</groupId>
+    <artifactId>gwt-sl</artifactId>
+    <version>0.1.5b</version>
+  </dependency>
+</dependencies>
+</project>

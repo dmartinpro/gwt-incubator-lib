@@ -1,0 +1,22 @@
+.TimePicker, .TimePickerTextField, .TimePickerLabel, .TimePickerPopup {
+	color:#0d87cd;
+	font-family:Arial;
+	font-size:9pt;
+	horizontal-align:center;
+	vertical-align:bottom;
+}
+.TimePicker {
+	horizontal-align:left;
+	vertical-align:bottom;
+}
+.TimePickerLabel {
+}
+.TimePickerTextField {
+	background: white url('resize-handle.gif') no-repeat right;
+}
+.TimePickerPopup {
+	background-color: white;
+}
+.timeButton-focus {
+	font-weight:bold;
+}

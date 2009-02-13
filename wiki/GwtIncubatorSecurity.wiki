@@ -14,7 +14,7 @@ First you have to set up a Spring Security configuration. You can choose to prot
   * through AOP (Annotation @Secured or pointcut definition : <protect-pointcut .../> )
   * through URL filtering (<intercept-url... />)
 
-Both ways works but annotation is my preferred choice.
+Both solutions work but annotation is my preferred choice.
 
 Once this is done, you have to extend SecuredAsyncCallback on every RPC call to be able to use the security management. That way, you'll have to implement 3 methods instead of the 2 (onSuccess and onFailure) :
 

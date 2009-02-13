@@ -2,7 +2,8 @@
 
 = How it is supposed to work =
 
-The package provide several things that should be describe first :
+The package provides several things that should be describe first :
+
   * An extended AsyncCallback named SecuredAsyncCallback
   * A new GWTHandler (@see GWT-SL documentation) called GWTSecuredHandler
   * A set of exceptions that translates spring exceptions types in a GWT equivalence
@@ -24,7 +25,7 @@ Once this is done, you have to extend SecuredAsyncCallback on every RPC call to 
 
 You can easily understand what the meaning of each of these methods is, can't you ?
 
-The second important point is to declare on each method of your RemoteService interface ApplicationSecurityException as an exception that could be thrown. Yes, I know, that can be a little bit annoying, but hey, I didn't find any other way to do. Fell free to give me advices on this point.
+The second important point is to declare on each method of your RemoteService interface ApplicationSecurityException as an exception that could be thrown. Yes, I know, that can be a little bit annoying, but hey, I didn't find any other way to do. Feel free to give me advices on this point :)
 
 Example :
 {{{
@@ -37,4 +38,4 @@ public interface SimpleRPCService extends RemoteService {
 
 }}}
 
-So, it's time to give it a try right now !
+So, it's time to give it a try right now !!

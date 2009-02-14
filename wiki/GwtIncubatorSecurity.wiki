@@ -10,7 +10,7 @@ The package provides several things that should be describe first :
 
 Now, I can explain how all this cool stuff works :
 
-First you have to set up a Spring Security configuration. You can choose to protect your RPC call with the different strategies Spring Security allows :
+First you have to set up a Spring Security configuration. You can choose to protect your RPC calls with the different strategies Spring Security allows :
 
   * through AOP (Annotation @Secured or pointcut definition : <protect-pointcut .../> )
   * through URL filtering (<intercept-url... />)
@@ -25,7 +25,7 @@ Once this is done, you have to extend SecuredAsyncCallback on every RPC call to 
 
 You can easily understand what the meaning of each of these methods is, can't you ?
 
-The second important point is to declare on each method of your RemoteService interface ApplicationSecurityException as an exception that could be thrown. Yes, I know, that can be a little bit annoying, but hey, I didn't find any other way to do. Feel free to give me advices on this point :)
+The second important point is to declare for each protected method of your RemoteService interface ApplicationSecurityException an exception that could be thrown. Yes, I know, that can be a little bit annoying and invasive, but hey, I didn't find any other way to do. Feel free to give me advices on this point :)
 
 Example :
 {{{
@@ -35,7 +35,6 @@ public interface SimpleRPCService extends RemoteService {
 	MyObject getData() throws ApplicationSecurityException;
 
 }
-
 }}}
 
 
@@ -74,13 +73,14 @@ public interface SimpleRPCService extends RemoteService {
 }}}
 
 
-*OR* activate annotations to protect your service, as it is described below :
+*OR* enable annotations to protect your service, as it is described below :
 
 {{{
     <global-method-security secured-annotations="enabled" />
 }}}
+NOTE : you can choose between spring or jsr250, the example only shows spring annotation activation
 
-and add the annotation to your service definition :
+and add the @Secured annotation to your service definition :
 
 {{{
 public interface SimpleRPCService extends RemoteService {
@@ -130,7 +130,7 @@ public interface SimpleRPCService extends RemoteService {
 
 And that's all for the server side part of the work.
 
-Now, let's describe the client part and more precisely, how to use the SecuredAsyncCallback.
+Now, let's describe the client part and more precisely, how to use the SecuredAsyncCallback class.
 
 Here is an example :
 

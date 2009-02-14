@@ -64,7 +64,17 @@ You can use for this method a pointcut definition to protect your service, like 
     </global-method-security>
 }}}
 
-or activate annotations and protect your service, as it is described below :
+and use a remote service definition like this one :
+{{{
+public interface SimpleRPCService extends RemoteService {
+
+    MyObject getData() throws ApplicationSecurityException;
+
+}
+}}}
+
+
+*OR* activate annotations to protect your service, as it is described below :
 
 {{{
     <global-method-security secured-annotations="enabled" />

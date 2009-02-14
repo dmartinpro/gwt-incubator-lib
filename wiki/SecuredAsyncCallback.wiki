@@ -1,0 +1,5 @@
+#summary SecuredAsyncCallback
+
+= What is it? =
+
+This is the client side class that provides a distinct method to manage security errors.

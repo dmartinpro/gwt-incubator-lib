@@ -1,7 +1,5 @@
 #summary ApplicationSecurityException
 
-= The ApplicationSecurityException family =
-
 The ApplicationSecurityException is the parent class of two lovely children :
 
   * AccessDeniedException

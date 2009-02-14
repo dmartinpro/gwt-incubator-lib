@@ -1,4 +1,4 @@
-#summary Quick presentation
+#summary Quick presentation : use it as the wiki index page
 
 = How it is supposed to work =
 

@@ -38,7 +38,7 @@ public interface SimpleRPCService extends RemoteService {
 }}}
 
 
-It's time to go back to the method you choose to protect your so precious resources with Spring Security. Let's detail this point a little bit more.
+It's time to go back to the solution you choose to protect your so precious resources with Spring Security. Let's detail this point a little bit more.
 In order to be able to access your protected resources, the user must be authenticated AND have enough privilege. Let's consider the user is already authenticated before accessing your remote service (RPC). One easy solution for that is to filter the access to the EntryPoint in order to force him to authenticate before doing anything else.
 
 This can be achieved with this type of configuration (if your EntryPoint html file is under /gwt/) :

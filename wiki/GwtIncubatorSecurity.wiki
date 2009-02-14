@@ -38,4 +38,107 @@ public interface SimpleRPCService extends RemoteService {
 
 }}}
 
+
+It's time to go back to the method you choose to protect your so precious resources with Spring Security. Let's detail this point a little bit more.
+In order to be able to access your protected resources, the user must be authenticated AND have enough privilege. Let's consider the user is already authenticated before accessing your remote service (RPC). One easy solution for that is to filter the access to the EntryPoint in order to force him to authenticate before doing anything else.
+
+This can be achieved with this type of configuration (if your EntryPoint html file is under /gwt/) :
+{{{
+    <http entry-point-ref="yourPotentialSpecificProcessingFilterEntryPoint">
+        <intercept-url pattern="/gwt/**" access="ROLE_USER" />
+        [...]
+    </http>
+}}}
+
+That way, when accessing for the first time anything behind /gwt/*, Spring Security will redirect you to the login page.
+
+Now, let's describe the two distincts methods :
+
+  * AOP
+
+You can use for this method a pointcut definition to protect your service, like in the following example :
+
+{{{
+    <global-method-security secured-annotations="disabled" jsr250-annotations="disabled">
+	<protect-pointcut expression="execution(* com.gwtsamplewebapp.ui.server.SimpleRPCServiceImpl.get*(..))" access="ROLE_SUPERVISOR" />
+    </global-method-security>
+}}}
+
+or activate annotations and protect your service, as it is described below :
+
+{{{
+    <global-method-security secured-annotations="enabled" />
+}}}
+
+and add the annotation to your service definition :
+
+{{{
+public interface SimpleRPCService extends RemoteService {
+
+    @Secured({"ROLE_SUPERVISOR"})
+    MyObject getData() throws ApplicationSecurityException;
+
+}
+}}}
+
+And that's enough !
+
+  * Using the URL filtering
+
+First, you need to protect your RPC calls like that :
+{{{
+    <intercept-url pattern="/rpc/**" access="ROLE_SUPERVISOR" />
+}}}
+
+Then, you have to add some magic to your web.xml :
+{{{
+    <error-page>
+        <error-code>403</error-code>
+        <location>/403.jsp</location>
+    </error-page>
+}}}
+
+And define the 403.jsp like that :
+{{{
+<%@ page session="false" isErrorPage="true" %><?xml version="1.0" encoding="UTF-8"?>
+<security>
+    <code>${requestScope["javax.servlet.error.status_code"]}</code>
+    <message>${requestScope["javax.servlet.error.message"]}</message>
+    <exception>${requestScope["javax.servlet.error.exception_type"]}</exception>
+</security>
+}}}
+
+Your RPC service definition is simpler since you don't need to add the annotation :
+{{{
+public interface SimpleRPCService extends RemoteService {
+
+    MyObject getData() throws ApplicationSecurityException;
+
+}
+}}}
+
+
+And that's all for the server side part of the work.
+
+Now, let's describe the client part and more precisely, how to use the SecuredAsyncCallback.
+
+Here is an example :
+
+{{{
+ServicesFactory.getSimpleRpc().getData(new SecuredAsyncCallback<MyObject>() {
+    	public void onSecurityException(ApplicationSecurityException exception) {
+    		Window.alert("Security exception catched.\n" + exception.getMessage());
+    	}
+
+    	public void onOtherException(Throwable exception) {
+    		Window.alert("The operation failed : the service encountered an internal issue.\n" + exception);
+    	}
+
+    	public void onSuccess(MyObject object) {
+    		Window.alert("Success : " + object);
+    	}
+});
+}}}
+
+
 So, it's time to give it a try right now !!

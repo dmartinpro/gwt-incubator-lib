@@ -58,6 +58,44 @@ As you can see, Spring Security 2.x provides a very easy configuration (via auto
 
 The example above illustrates the use of annotation : the `global-method-security` enables them.
 
-Thus, every call to your GWT resources (your HTML entry points) are protected through the use of the URL filter. And every RPC call you wish to protect just have to add the `@secured` annotation (and the `throws` declaration too).
+Now, you have to map RPC calls to the right service implementation. Here are the steps.
+First add the following lines in you web.xml file :
+
+{{{
+	<servlet>
+		<servlet-name>springrpc</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>springrpc</servlet-name>
+		<url-pattern>/rpc/*</url-pattern>
+	</servlet-mapping>
+}}}
+
+Then, edit the `springrpc-servlet.xml` file like this one :
+
+{{{
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+			http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+			http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
+
+	<bean id="urlMapping" class="com.gwtincubator.security.server.GWTSecuredHandler">
+		<property name="mappings">
+			<map>
+				<entry key="/getData.rpc" value-ref="SimpleRPCService" />
+			</map>
+		</property>
+	</bean>
+
+</beans>
+}}}
+
+Thus, every call to your GWT resources (your HTML entry points) are protected through the use of the URL filter and every RPC call you wish to protect just have to add the `@secured` annotation (and the `throws` declaration too).
 
 I hope this is clear enough.

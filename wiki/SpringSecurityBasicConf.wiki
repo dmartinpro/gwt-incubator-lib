@@ -19,7 +19,7 @@ First, just add this to your actual configuration :
 
 }}}
 
-This will enable URL filtering for every requests.
+This will enable URL filtering for every request.
 
 Once this step done, you can adjust your application context configuration. Let's have a look at the very simple sample provided right after :
 

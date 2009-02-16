@@ -31,8 +31,7 @@ Once this step done, you can adjust your application context configuration. Let'
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
                         http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.4.xsd">
 
-	<global-method-security secured-annotations="enabled" jsr250-annotations="disabled">
-	</global-method-security>
+	<global-method-security secured-annotations="enabled" jsr250-annotations="disabled" />
 
     <http auto-config="true">
         <intercept-url pattern="/gwt/**" access="ROLE_USER"/>

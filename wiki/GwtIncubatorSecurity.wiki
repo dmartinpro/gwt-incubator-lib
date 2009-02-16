@@ -152,3 +152,4 @@ ServicesFactory.getSimpleRpc().getData(new SecuredAsyncCallback<MyObject>() {
 
 
 So, it's time to give it a try right now !!
+If you need more information about Spring Security configuration and GWT-SL use, see this page : SpringSecurityBasicConf.

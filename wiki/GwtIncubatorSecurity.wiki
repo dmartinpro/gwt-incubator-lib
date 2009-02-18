@@ -136,7 +136,6 @@ Here is a sample of a Spring Security configuration :
 		<beans:property name="objectDefinitionSource">
 			<filter-invocation-definition-source>
 		        <intercept-url pattern="/rpc/**" access="ROLE_USER" />
-		        <intercept-url pattern="/test.html" access="ROLE_USER"/>
 		        <intercept-url pattern="/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />
 			</filter-invocation-definition-source>
 		</beans:property>

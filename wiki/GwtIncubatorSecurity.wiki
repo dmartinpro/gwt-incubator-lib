@@ -105,37 +105,61 @@ First, when accessing a resource that's not allowed, the ExceptionTranslationFil
 
 I decided to override the ExceptionTranslationFilter and enhance its behavior. Here is how it should work :
 If an exception (I mean SpringSecurityException) occurs, the newly created class should check if the URL that generated this exception was related to a RPC call or not.
+
 If so, the original behavior should change to something specific : either send a message for the RPC call or send something else that could be processed by the callback class.
-Actually, SecuredAsyncCallback can manage XML responses that follow this pattern :
-<security>
+Actually, SecuredAsyncCallback can manage, besides RPC responses, XML responses that follow this pattern :
 
+<security>
+  <code>XXX</code>
+  <message>XXX</message>
+  <exception>XXX</exception>
 </security>
 
+In order to determine if a request comes from a RPC call or anything else, the new ExceptionTranslationFilter - called GWTExceptionTranslationFilter - must rely on pattern analysis. That way, if a request matches one of the patterns provided, the answer be different from the original one.
 
-First, you need to protect your RPC calls like that :
+It's time now to show how it works :
+
+
+First, you have to knwo that it's not possible to supply a custom ExceptionTranslationFilter while using the namespace. So, you must define the Spring Security configuration the old way ; that means defining every single bean...
+(In fact, that can be possible but you must not rely on it...)
+
+Here is a sample of a Spring Security configuration :
+
 {{{
-    <intercept-url pattern="/rpc/**" access="ROLE_SUPERVISOR" />
+[...]
+	<beans:bean id="filterSecurityInterceptor" class="org.springframework.security.intercept.web.FilterSecurityInterceptor">
+		<beans:property name="authenticationManager" ref="authenticationManager" />
+		<beans:property name="accessDecisionManager" ref="accessDecisionManager" />
+		<beans:property name="objectDefinitionSource">
+			<filter-invocation-definition-source>
+		        <intercept-url pattern="/rpc/**" access="ROLE_USER" />
+		        <intercept-url pattern="/test.html" access="ROLE_USER"/>
+		        <intercept-url pattern="/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />
+			</filter-invocation-definition-source>
+		</beans:property>
+	</beans:bean>
+
+	<util:set id="gwtPathsSet" 
+  		set-class="java.util.HashSet"
+      	value-type="java.lang.String">
+             <beans:value>/rpc/**</beans:value>
+    </util:set>
+
+	<beans:bean id="exceptionTranslationFilter" class="com.gwtincubator.security.server.GWTExceptionTranslationFilter">
+		<beans:property name="authenticationEntryPoint" ref="authenticationProcessingFilterEntryPoint" />
+		<beans:property name="gwtPaths" ref="gwtPathsSet" />
+	</beans:bean>
+[...]
 }}}
 
-Then, you have to add some magic to your web.xml :
-{{{
-    <error-page>
-        <error-code>403</error-code>
-        <location>/403.jsp</location>
-    </error-page>
-}}}
+Let's focus on the important parts in it, viz. the `objectDefinitionSource` property of the FilterSecurityInterceptor and the GWTExceptionTranslationFilter bean declaration.
 
-And define the 403.jsp like that :
-{{{
-<%@ page session="false" isErrorPage="true" %><?xml version="1.0" encoding="UTF-8"?>
-<security>
-    <code>${requestScope["javax.servlet.error.status_code"]}</code>
-    <message>${requestScope["javax.servlet.error.message"]}</message>
-    <exception>${requestScope["javax.servlet.error.exception_type"]}</exception>
-</security>
-}}}
+You have to define in the first one every filter you want to add to your application. There is nothing special here.
+Now, let's have a look on the GWTExceptionTranslationFilter. This bean should have a `gwtPaths` definition, matching the RPC calls URL. You can also specify the value for `forbiddenCodeHttpResponse`. If set to true, it enables the alternate response (non RPC serialized) ; see further for more information. The other interesting parameter is `matcher` if you want to use a non Ant style syntax for your patterns.
 
-Your RPC service definition is simpler since you don't need to add the annotation :
+Once this configuration done, you're ready to use the URL filtering on your asynchronous calls.
+
+You now just have to define your Remote Service to be 'Security compliant' by adding the ApplicationSecurityException declaration to your methods:
 {{{
 public interface SimpleRPCService extends RemoteService {
 
@@ -145,9 +169,31 @@ public interface SimpleRPCService extends RemoteService {
 }}}
 
 
-And that's all for the server side part of the work.
+Let's detail a little bit more how the alternate response works. If `forbiddenCodeHttpResponse` is set to true, the GWTExceptionTranslationFilter will return a 403 error code response. As you may know, you can map this error to a specific page in the web.xml file by adding these lines:
 
+{{{
+    <error-page>
+        <error-code>403</error-code>
+        <location>/403.jsp</location>
+    </error-page>
+}}}
+
+where the 403.jsp file looks like:
+{{{
+<%@ page session="false" isErrorPage="true" %><?xml version="1.0" encoding="UTF-8"?>
+<security>
+    <code>${requestScope["javax.servlet.error.status_code"]}</code>
+    <message>${requestScope["javax.servlet.error.message"]}</message>
+    <exception>${requestScope["javax.servlet.error.exception_type"]}</exception>
+</security>
+}}}
+
+
+
+And that's all for the server side part of the work.
 Now, let's describe the client part and more precisely, how to use the SecuredAsyncCallback class.
+
+
 
 Here is an example :
 

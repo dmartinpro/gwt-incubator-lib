@@ -109,11 +109,13 @@ If an exception (I mean SpringSecurityException) occurs, the newly created class
 If so, the original behavior should change to something specific : either send a message for the RPC call or send something else that could be processed by the callback class.
 Actually, SecuredAsyncCallback can manage, besides RPC responses, XML responses that follow this pattern :
 
+{{{
 <security>
   <code>XXX</code>
   <message>XXX</message>
   <exception>XXX</exception>
 </security>
+}}}
 
 In order to determine if a request comes from a RPC call or anything else, the new ExceptionTranslationFilter - called GWTExceptionTranslationFilter - must rely on pattern analysis. That way, if a request matches one of the patterns provided, the answer be different from the original one.
 
@@ -188,12 +190,12 @@ where the 403.jsp file looks like:
 </security>
 }}}
 
-
+----
 
 And that's all for the server side part of the work.
 Now, let's describe the client part and more precisely, how to use the SecuredAsyncCallback class.
 
-
+----
 
 Here is an example :
 

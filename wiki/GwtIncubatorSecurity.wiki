@@ -117,12 +117,13 @@ Actually, SecuredAsyncCallback can manage, besides RPC responses, XML responses 
 </security>
 }}}
 
-In order to determine if a request comes from a RPC call or anything else, the new ExceptionTranslationFilter - called GWTExceptionTranslationFilter - must rely on pattern analysis. That way, if a request matches one of the patterns provided, the answer be different from the original one.
+In order to determine if a request comes from a RPC call or anything else, the new ExceptionTranslationFilter - called GWTExceptionTranslationFilter - must rely on pattern analysis. That way, if a request matches one of the patterns provided, the answer will be different from the original one.
+
 
 It's time now to show how it works :
 
 
-First, you have to knwo that it's not possible to supply a custom ExceptionTranslationFilter while using the namespace. So, you must define the Spring Security configuration the old way ; that means defining every single bean...
+First, you have to know that it's not possible to supply a custom ExceptionTranslationFilter while using the namespace (yep, really sad indeed!). So, you must define the Spring Security configuration the old way ; that means defining every single bean...
 (In fact, that can be possible but you must not rely on it...)
 
 Here is a sample of a Spring Security configuration :

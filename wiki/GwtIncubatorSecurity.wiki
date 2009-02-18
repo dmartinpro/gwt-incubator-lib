@@ -1,5 +1,7 @@
 #summary Quick presentation : use it as the wiki index page
 
+= IN PROGRESS.... =
+
 = How it is supposed to work =
 
 The package provides several things that should be describe first :
@@ -93,7 +95,22 @@ public interface SimpleRPCService extends RemoteService {
 
 And that's enough !
 
+
   * Using the URL filtering
+
+Things are not as easy as it seems here. Because URL filtering checks if the user accessing a resource is allowed or not *before* anything else AND independently if it's a specific RPC call or anything else, we should provide a solution that is smart enough to deal with this !
+
+Here is how I decided to solve this issue.
+First, when accessing a resource that's not allowed, the ExceptionTranslationFilter is used to determine what was the reason of the error and deal with it. It means if the user isn't authenticated (or is authenticated but is ANONYMOUS), a redirection to the login page will occur, otherwise the management of the error is delegated to a handler.
+
+I decided to override the ExceptionTranslationFilter and enhance its behavior. Here is how it should work :
+If an exception (I mean SpringSecurityException) occurs, the newly created class should check if the URL that generated this exception was related to a RPC call or not.
+If so, the original behavior should change to something specific : either send a message for the RPC call or send something else that could be processed by the callback class.
+Actually, SecuredAsyncCallback can manage XML responses that follow this pattern :
+<security>
+
+</security>
+
 
 First, you need to protect your RPC calls like that :
 {{{

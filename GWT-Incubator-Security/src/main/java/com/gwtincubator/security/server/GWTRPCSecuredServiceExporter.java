@@ -6,14 +6,12 @@ import java.util.Map;
 import javax.servlet.ServletContext;
 
 import org.gwtwidgets.server.spring.GWTRPCServiceExporter;
-import org.springframework.security.AccessDeniedException;
 import org.springframework.security.SpringSecurityException;
 
 import com.google.gwt.user.client.rpc.SerializationException;
 import com.google.gwt.user.server.rpc.RPC;
 import com.google.gwt.user.server.rpc.RPCRequest;
 import com.google.gwt.user.server.rpc.UnexpectedException;
-import com.gwtincubator.security.exception.ApplicationSecurityException;
 
 /**
  * Security oriented version of George Georgovassilis GWTRPCServiceExporter.
@@ -104,22 +102,6 @@ public class GWTRPCSecuredServiceExporter extends GWTRPCServiceExporter {
 		} else {
 			throw new SerializationException(e);
 		}
-	}
-
-	public static class SecurityExceptionFactory {
-
-		public static ApplicationSecurityException get(final SpringSecurityException springException) {
-			ApplicationSecurityException gwtException = null;
-			if (springException instanceof AccessDeniedException) {
-				gwtException = new com.gwtincubator.security.exception.AccessDeniedException(springException.getMessage(), springException);
-			} else if (true) {
-				gwtException = new com.gwtincubator.security.exception.AuthenticationException(springException.getMessage(), springException);
-			} else {
-				gwtException = new com.gwtincubator.security.exception.ApplicationSecurityException(springException.getMessage(), springException);
-			}
-			return gwtException;
-		}
-
 	}
 
 }

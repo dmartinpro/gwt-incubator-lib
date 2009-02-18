@@ -25,7 +25,6 @@
 	<authentication-manager alias="authenticationManager" />
 
 	<beans:bean id="authenticationProcessingFilter" class="org.springframework.security.ui.webapp.AuthenticationProcessingFilter">
-		<custom-filter position="AUTHENTICATION_PROCESSING_FILTER"/>
 		<beans:property name="authenticationManager" ref="authenticationManager" />
 		<beans:property name="alwaysUseDefaultTargetUrl" value="true" />
 		<beans:property name="defaultTargetUrl" value="/" />
@@ -34,7 +33,6 @@
 	</beans:bean>
 
 	<beans:bean id="anonymousProcessingFilter" class="org.springframework.security.providers.anonymous.AnonymousProcessingFilter">
-		<custom-filter position="ANONYMOUS_FILTER"/>
 		<beans:property name="key" value="anonymousKey" />
 		<beans:property name="userAttribute" value="anonymousUser,ROLE_ANONYMOUS" />
 	</beans:bean>
@@ -44,12 +42,9 @@
 	  <beans:property name="key" value="anonymousKey"/>
 	</beans:bean>
 
-	<beans:bean id="httpSessionContextIntegrationFilter" class="org.springframework.security.context.HttpSessionContextIntegrationFilter">
-		<custom-filter position="SESSION_CONTEXT_INTEGRATION_FILTER"/>
-	</beans:bean>
+	<beans:bean id="httpSessionContextIntegrationFilter" class="org.springframework.security.context.HttpSessionContextIntegrationFilter" />
 
 	<beans:bean id="logoutFilter" class="org.springframework.security.ui.logout.LogoutFilter">
-		<custom-filter position="LOGOUT_FILTER"/>
       <beans:constructor-arg value="/index.html"/> <!-- URL redirected to after logout -->
       <beans:constructor-arg>
          <beans:list>

@@ -1,6 +1,6 @@
-#summary This is a Spring Security very basic configuration example
+#summary This is a Spring Security very basic configuration example for the AOP solution
 
-If you want to test gwt-incubator-security in a GWT Spring application, here are some useful even if simple information :
+If you want to test gwt-incubator-security in a GWT Spring application *using the AOP solution*, here are some useful - even if simple - information :
 
 First, just add this to your actual configuration :
 
@@ -99,3 +99,5 @@ Then, edit the `springrpc-servlet.xml` file like this one :
 Thus, every call to your GWT resources (your HTML entry points) are protected through the use of the URL filter and every RPC call you wish to protect just have to add the `@secured` annotation (and the `throws` declaration too).
 
 I hope this is clear enough.
+
+If you want to use URL Filtering on asynchronous requests, please have a look on this dedicated page : UrlFilteringSpringConfiguration.

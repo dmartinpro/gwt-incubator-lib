@@ -1,7 +1,5 @@
 #summary Quick presentation : use it as the wiki index page
 
-= IN PROGRESS.... =
-
 = How it is supposed to work =
 
 The package provides several things that should be describe first :

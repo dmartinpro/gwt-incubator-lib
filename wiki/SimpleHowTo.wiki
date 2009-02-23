@@ -1,7 +1,5 @@
 #summary This is a simple how-to
 
-*WORK IN PROGRESS : You'll find here everything to implement Spring Security in a fast way.*
-
 = The fastest way to secure your application =
 
 Here is a recipe to start securing a web application in a few minutes. Just follow the examples provided and in 5 minutes, your application will be secured !

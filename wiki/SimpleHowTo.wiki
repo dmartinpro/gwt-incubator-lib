@@ -1,0 +1,46 @@
+#summary This is a simple how-to
+
+*WORK IN PROGRESS : You'll find here everything to implement Spring Security in a fast way.*
+
+= The fastest way to secure your application =
+
+Here is a recipe to start securing a web application in a few minutes. Just follow the examples provided and in 5 minutes, your application will be secured !
+
+== Web app descriptor ==
+
+Add this to your web.xml file :
+
+{{{
+sample code here
+}}}
+
+
+== Add your security configuration ==
+
+Here is a small but sufficient configuration definition
+
+{{{
+sample code here
+}}}
+
+== Modify your service interface definition ==
+
+Let's figure out your service(s) looks like this one :
+
+{{{
+sample code here
+}}}
+
+You just have to modify them by adding a complementary *throws* declaration AND an annotation according to the security level wanted.
+
+{{{
+sample code here
+}}}
+
+== Personalize your client callback class ==
+
+Now, let's modify the way your callback will handle security exceptions :
+
+{{{
+sample code here
+}}}

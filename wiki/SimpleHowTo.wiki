@@ -138,9 +138,7 @@ buttonRPC.addClickListener(new ClickListener() {
     ServicesFactory.getSimpleRpc().getData(
         new SecuredAsyncCallback<TestObject>() {
             public void onSecurityException(final ApplicationSecurityException exception) {
-                final StringBuffer errorMsg = new StringBuffer();
-                errorMsg.append(exception.getMessage());
-                Window.alert("Security exception catched.\n" + errorMsg.toString());
+                Window.alert("Security exception catched.\n" + exception.getMessage());
             }
 
             public void onOtherException(final Throwable exception) {

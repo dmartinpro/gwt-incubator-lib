@@ -11,16 +11,77 @@ Here is a recipe to start securing a web application in a few minutes. Just foll
 Add this to your web.xml file :
 
 {{{
-sample code here
+    <context-param>
+	<param-name>contextConfigLocation</param-name>
+	<param-value>/WEB-INF/classic-spring-configuration.xml,/WEB-INF/aop-applicationContext.xml</param-value>
+    </context-param>
+
+}}}
+
+where `classic-spring-configuration.xml` is the previous (if nay) Spring configuration and `aop-applicationContext.xml` is the Spring Security configuration (see next point for this file)
+
+You have to add this too :
+
+{{{
+    <filter>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+
+    <filter-mapping>
+      <filter-name>springSecurityFilterChain</filter-name>
+      <url-pattern>/*</url-pattern>
+    </filter-mapping>
+}}}
+
+in order to filter every request.
+
+As your are using Spring you may also have this. If not, just add it :
+
+{{{
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+
+	<servlet>
+		<servlet-name>springservlet</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>springservlet</servlet-name>
+		<url-pattern>/rpc/*</url-pattern>
+	</servlet-mapping>
 }}}
 
 
 == Add your security configuration ==
 
-Here is a small but sufficient configuration definition
+Here is a small but sufficient configuration definition. Save this file as `aop-applicationContext.xml` :
 
 {{{
-sample code here
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+    xmlns:beans="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.4.xsd">
+
+    <global-method-security secured-annotations="enabled" />
+
+    <http auto-config="true" />
+
+    <authentication-provider>
+      <user-service>
+        <user name="rod" password="koala" authorities="ROLE_SUPERVISOR, ROLE_USER, ROLE_TELLER" />
+	<user name="dianne" password="emu" authorities="ROLE_USER,ROLE_TELLER" />
+        <user name="scott" password="wombat" authorities="ROLE_USER" />
+        <user name="peter" password="opal" authorities="ROLE_USER" />
+      </user-service>
+    </authentication-provider>
+
+</beans:beans>
 }}}
 
 == Modify your service interface definition ==
@@ -28,13 +89,34 @@ sample code here
 Let's figure out your service(s) looks like this one :
 
 {{{
-sample code here
+public interface SimpleRPCService extends RemoteService {
+
+	/**
+	 * Get cool data to client side
+	 * @return a Great Test Object fully qualified
+	 */
+	TestObject getData();
+
+}
 }}}
 
 You just have to modify them by adding a complementary *throws* declaration AND an annotation according to the security level wanted.
 
 {{{
-sample code here
+[...]
+import org.springframework.security.annotation.Secured;
+import com.gwtincubator.security.exception.ApplicationSecurityException;
+
+public interface SimpleRPCService extends RemoteService {
+
+	/**
+	 * Get cool data to client side
+	 * @return a Great Test Object fully qualified
+	 */
+        @Secured({"ROLE_SUPERVISOR"})
+	TestObject getData() throws ApplicationSecurityException;
+
+}
 }}}
 
 == Personalize your client callback class ==
@@ -42,5 +124,27 @@ sample code here
 Now, let's modify the way your callback will handle security exceptions :
 
 {{{
-sample code here
+final Button buttonRPC = new Button("Call Simple RPC Service...");
+buttonRPC.addClickListener(new ClickListener() {
+	public void onClick(Widget sender) {
+    ServicesFactory.getSimpleRpc().getData(
+        new SecuredAsyncCallback<TestObject>() {
+            public void onSecurityException(final ApplicationSecurityException exception) {
+                final StringBuffer errorMsg = new StringBuffer();
+                errorMsg.append(exception.getMessage());
+                Window.alert("Security exception catched.\n" + errorMsg.toString());
+            }
+
+            public void onOtherException(final Throwable exception) {
+                Window.alert("Unexpected exception while requesting the remote service.\n" + exception);
+            }
+
+            public void onSuccess(final TestObject object) {
+                Window.alert("Success : " + object + " : " + System.currentTimeMillis());
+            }
+
+        });
+    }
+});
+
 }}}

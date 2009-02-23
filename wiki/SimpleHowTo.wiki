@@ -4,6 +4,8 @@
 
 Here is a recipe to start securing a web application in a few minutes. Just follow the examples provided and in 5 minutes, your application will be secured !
 
+NOTE : check the pom.xml for dependencies (especially [http://transmorph.sourceforge.net/wiki/index.php/Main_Page|Transmorph] and [http://gwt-widget.sourceforge.net/|GWT-SL])
+
 == Web app descriptor ==
 
 Add this to your web.xml file :

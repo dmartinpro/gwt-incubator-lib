@@ -121,7 +121,13 @@ public interface SimpleRPCService extends RemoteService {
 }
 }}}
 
-== Personalize your client callback class ==
+== Personalize your client callback class / client dependencies ==
+
+Let's add this to your module definition :
+
+{{{
+    <inherits name="com.gwtincubator.security.IncubatorSecurity"/>
+}}}
 
 Now, let's modify the way your callback will handle security exceptions :
 

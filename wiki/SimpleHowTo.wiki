@@ -18,7 +18,7 @@ Add this to your web.xml file :
 
 }}}
 
-where `classic-spring-configuration.xml` is the previous (if nay) Spring configuration and `aop-applicationContext.xml` is the Spring Security configuration (see next point for this file)
+where `classic-spring-configuration.xml` is the previous (if any) Spring configuration and `aop-applicationContext.xml` is the Spring Security configuration (not created yet : see next point for this file)
 
 You have to add this too :
 
@@ -39,26 +39,26 @@ in order to filter every request.
 As your are using Spring you may also have this. If not, just add it :
 
 {{{
-	<listener>
-		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-	</listener>
+    <listener>
+	<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
 
-	<servlet>
-		<servlet-name>springservlet</servlet-name>
-		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-		<load-on-startup>1</load-on-startup>
-	</servlet>
+    <servlet>
+	<servlet-name>springservlet</servlet-name>
+	<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+	<load-on-startup>1</load-on-startup>
+    </servlet>
 
-	<servlet-mapping>
-		<servlet-name>springservlet</servlet-name>
-		<url-pattern>/rpc/*</url-pattern>
-	</servlet-mapping>
+    <servlet-mapping>
+	<servlet-name>springservlet</servlet-name>
+	<url-pattern>/rpc/*</url-pattern>
+    </servlet-mapping>
 }}}
 
 
 == Add your security configuration ==
 
-Here is a small but sufficient configuration definition. Save this file as `aop-applicationContext.xml` :
+Here is a small but sufficient configuration definition. Save this file as `aop-applicationContext.xml` under WEB-INF/ :
 
 {{{
 <?xml version="1.0" encoding="UTF-8"?>
@@ -89,6 +89,8 @@ Here is a small but sufficient configuration definition. Save this file as `aop-
 Let's figure out your service(s) looks like this one :
 
 {{{
+[...]
+
 public interface SimpleRPCService extends RemoteService {
 
 	/**

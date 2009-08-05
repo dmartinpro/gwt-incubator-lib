@@ -1,6 +1,7 @@
 package com.gwtincubator.security.server;
 
 import org.springframework.security.AccessDeniedException;
+import org.springframework.security.AuthenticationException;
 import org.springframework.security.SpringSecurityException;
 
 import com.gwtincubator.security.exception.ApplicationSecurityException;
@@ -8,7 +9,6 @@ import com.gwtincubator.security.exception.ApplicationSecurityException;
 /**
  * 
  * @author David MARTIN
- *
  */
 public class SecurityExceptionFactory {
 
@@ -16,7 +16,7 @@ public class SecurityExceptionFactory {
 		ApplicationSecurityException gwtException = null;
 		if (springException instanceof AccessDeniedException) {
 			gwtException = new com.gwtincubator.security.exception.AccessDeniedException(springException.getMessage(), springException);
-		} else if (true) {
+		} else if (springException instanceof AuthenticationException) {
 			gwtException = new com.gwtincubator.security.exception.AuthenticationException(springException.getMessage(), springException);
 		} else {
 			gwtException = new com.gwtincubator.security.exception.ApplicationSecurityException(springException.getMessage(), springException);

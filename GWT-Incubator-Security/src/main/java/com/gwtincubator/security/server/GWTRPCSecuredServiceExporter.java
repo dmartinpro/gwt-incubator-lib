@@ -75,10 +75,12 @@ public class GWTRPCSecuredServiceExporter extends GWTRPCServiceExporter {
 	@Override
 	public String processCall(final String payload) throws SerializationException {
 		String response = null;
-		final RPCRequest rpcRequest = RPC.decodeRequest(payload);
+		// reported as not working with GWT.1.6.4 : Issue 2
+//		final RPCRequest rpcRequest = RPC.decodeRequest(payload);
+		final RPCRequest rpcRequest = RPC.decodeRequest(payload, null, this);
 		try {
 			response = super.processCall(payload);
-		} catch (Throwable e) { // Security Exceptions (preciousException) are wrapped into an UnexpectedException (cause1), which is wrapped into a RuntimeException (e)...
+		} catch (final Throwable e) { // Security Exceptions (preciousException here) are wrapped into an UnexpectedException (cause1), which is wrapped into a RuntimeException (e)...
 			final Throwable cause1 = e.getCause();
 			if (cause1 != null && cause1 instanceof UnexpectedException) {
 				final Throwable preciousException = cause1.getCause();

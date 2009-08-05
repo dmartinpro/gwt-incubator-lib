@@ -1,17 +1,22 @@
 package com.gwtincubator.widgets.client.timepicker;
 
 import com.google.gwt.dom.client.InputElement;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.FocusEvent;
+import com.google.gwt.event.dom.client.FocusHandler;
+import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.dom.client.MouseOverHandler;
+import com.google.gwt.event.dom.client.MouseUpEvent;
+import com.google.gwt.event.dom.client.MouseUpHandler;
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.FocusListener;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.MouseListener;
-import com.google.gwt.user.client.ui.MouseListenerAdapter;
 import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.PopupListener;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -28,7 +33,7 @@ import com.gwtincubator.widgets.client.label.WidgetLabel;
  * @author David MARTIN
  *
  */
-public class TimePicker extends Composite implements ClickListener, PropertyChangeListener {
+public class TimePicker extends Composite implements ClickHandler, PropertyChangeListener {
 
 	private final Panel innerPanel = new HorizontalPanel();
 
@@ -79,8 +84,8 @@ public class TimePicker extends Composite implements ClickListener, PropertyChan
 		this.popupPanel.setVisible(false);
 		this.popupPanel.addStyleName("DatePickerPopup");
 		this.popupPanel.add(getTimePopupFlexTable());
-		this.popupPanel.addPopupListener(new PopupListener() {
-			public void onPopupClosed(final PopupPanel sender, final boolean autoClosed) {
+		this.popupPanel.addCloseHandler(new CloseHandler<PopupPanel>() {
+			public void onClose(final CloseEvent<PopupPanel> event) {
 				if (validateOnClickOnly && restoreModel) {
 					final TimeModel cloneModel = TimePicker.this.timeModelClone;
 					if (cloneModel != null) {
@@ -129,9 +134,9 @@ public class TimePicker extends Composite implements ClickListener, PropertyChan
 			timeTextBox.setWidth("60px");
 			timeTextBox.setTimeModelConverter(getTimeModelConverter());
 			timeTextBox.addStyleName("TimePickerTextField");
-			final TextFieldFocusListener listener = new TextFieldFocusListener();
-			timeTextBox.addFocusListener(listener);
-			timeTextBox.addMouseListener(listener);
+			final TextFieldFocusListener handler = new TextFieldFocusListener();
+			timeTextBox.addFocusHandler(handler);
+			timeTextBox.addMouseOverHandler(handler);
 			getTimeModel().addPropertyChangeListener(timeTextBox);
 		}
 		return timeTextBox;
@@ -294,12 +299,12 @@ public class TimePicker extends Composite implements ClickListener, PropertyChan
 		return this.timeModel;
 	}
 
-	public void onClick(final Widget sender) {
+	public void onClick(final ClickEvent event) {
 		// TODO
 	}
 
-	public void addListener(final FocusListener listener) {
-		getTimeTextBox().addFocusListener(listener);
+	public void addListener(final FocusHandler handler) {
+		getTimeTextBox().addFocusHandler(handler);
 	}
 
 	public void addModelListener(final PropertyChangeListener listener) {
@@ -322,7 +327,7 @@ public class TimePicker extends Composite implements ClickListener, PropertyChan
 	/* ** Some inner classes...                            ** */
 	/* ****************************************************** */
 
-	private final class TextFieldFocusListener implements FocusListener, MouseListener {
+	private final class TextFieldFocusListener implements FocusHandler, MouseOverHandler {
 
 		private void process(final Widget sender) {
 			// If a popup is still open (ie clone is not null)... return !
@@ -345,32 +350,12 @@ public class TimePicker extends Composite implements ClickListener, PropertyChan
 			popupPanel.setVisible(true);
 		}
 		
-		public void onFocus(final Widget sender) {
-			process(sender);
+		public void onFocus(FocusEvent event) {
+			process((Widget) event.getSource());
 		}
 
-		public void onLostFocus(final Widget sender) {
-			// nothing to do
-		}
-
-		public void onMouseDown(final Widget sender, int x, int y) {
-			// nothing to do
-		}
-
-		public void onMouseEnter(final Widget sender) {
-			process(sender);
-		}
-
-		public void onMouseLeave(final Widget sender) {
-			// nothing to do
-		}
-
-		public void onMouseMove(final Widget sender, final int x, final int y) {
-			// nothing to do
-		}
-
-		public void onMouseUp(final Widget sender, final int x, final int y) {
-			// nothing to do
+		public void onMouseOver(MouseOverEvent event) {
+			process((Widget) event.getSource());
 		}
 
 	}
@@ -386,11 +371,11 @@ public class TimePicker extends Composite implements ClickListener, PropertyChan
 
 		private final TimePanelState state = new TimePanelState();
 
-		private final MouseListener modeListener = new ModeMouseListener();
+		private final MouseOverHandler modeListener = new ModeMouseListener();
 
-		private final MouseListener hourListener = new HourMouseListener();
+		private final MouseOverHandler hourListener = new HourMouseListener();
 
-		private final MouseListener minuteListener = new MinuteMouseListener();
+		private final MouseOverHandler minuteListener = new MinuteMouseListener();
 
 		private TimeButton[] hourButtons = new TimeButton[24];
 
@@ -444,7 +429,7 @@ public class TimePicker extends Composite implements ClickListener, PropertyChan
 
 			displayHours(getState().getMode());
 			displayMinutes(getState().getHourIndex());
-			
+
 		}
 
 		private TimePanelState getState() {
@@ -532,7 +517,7 @@ public class TimePicker extends Composite implements ClickListener, PropertyChan
 		protected Button getButtonAm() {
 			if (buttonAm == null) {
 				buttonAm = new SensitiveButton("am");
-				buttonAm.addMouseListener(modeListener);
+				buttonAm.addMouseOverHandler(modeListener);
 			}
 			return buttonAm;
 		}
@@ -543,7 +528,7 @@ public class TimePicker extends Composite implements ClickListener, PropertyChan
 		protected Button getButtonPm() {
 			if (buttonPm == null) {
 				buttonPm = new SensitiveButton("pm");
-				buttonPm.addMouseListener(modeListener);
+				buttonPm.addMouseOverHandler(modeListener);
 			}
 			return buttonPm;
 		}
@@ -552,7 +537,8 @@ public class TimePicker extends Composite implements ClickListener, PropertyChan
 			if (hourButtons[0] == null) {
 				for (int i = 0; i < 24; i++) {
 					hourButtons[i] = new TimeButton(i);
-					hourButtons[i].addMouseListener(hourListener);
+					hourButtons[i].addMouseOverHandler(hourListener);
+					hourButtons[i].addMouseUpHandler((MouseUpHandler) hourListener);
 				}
 			}
 			return this.hourButtons;
@@ -562,21 +548,22 @@ public class TimePicker extends Composite implements ClickListener, PropertyChan
 			if (minuteButtons[0] == null) {
 				for (int i = 0; i < 4; i++) {
 					minuteButtons[i] = new TimeButton(i*15);
-					minuteButtons[i].addMouseListener(minuteListener);
+					minuteButtons[i].addMouseOverHandler(minuteListener);
+					minuteButtons[i].addMouseUpHandler((MouseUpHandler) minuteListener);
 				}
 			}
 			return this.minuteButtons;
 		}
 
-		private class ClickMouseListener extends MouseListenerAdapter {
-			public void onMouseUp(final Widget sender, int x, int y) {
-				TimePopupFlexTable.this.listeners.firePropertyChangeEvent(TimePopupFlexTable.this, "visibility", false, true);
-			}
-		}
+//		private class ClickMouseListener implements MouseUpHandler {
+//			public void onMouseUp(MouseUpEvent event) {
+//				TimePopupFlexTable.this.listeners.firePropertyChangeEvent(TimePopupFlexTable.this, "visibility", false, true);
+//			}
+//		}
 
-		private class ModeMouseListener extends ClickMouseListener {
-			public void onMouseEnter(final Widget sender) {
-				final Button bt = (Button) sender;
+		private class ModeMouseListener implements MouseOverHandler {
+			public void onMouseOver(final MouseOverEvent event) {
+				final Button bt = (Button) event.getSource();
 				final String text = bt.getText();
 				final TimeMode mode = TimeMode.getTimeMode(text);
 				getState().setMode(mode);
@@ -585,22 +572,30 @@ public class TimePicker extends Composite implements ClickListener, PropertyChan
 			}
 		}
 
-		private class HourMouseListener extends ClickMouseListener {
-			public void onMouseEnter(final Widget sender) {
-				final TimeButton tb = (TimeButton) sender;
+		private class HourMouseListener implements MouseOverHandler, MouseUpHandler {
+			public void onMouseOver(final MouseOverEvent event) {
+				final TimeButton tb = (TimeButton) event.getSource();
 				int index = getHourButtonIndex(tb);
 				displayMinutes(index);
 				getState().setHourIndex(index);
 				getState().setHourValue(tb.getValue());
 			}
+
+			public void onMouseUp(MouseUpEvent event) {
+				hideOnClick();
+			}
 		}
 
-		private class MinuteMouseListener extends ClickMouseListener {
-			public void onMouseEnter(final Widget sender) {
-				final TimeButton tb = (TimeButton) sender;
+		private class MinuteMouseListener implements MouseOverHandler, MouseUpHandler {
+			public void onMouseOver(final MouseOverEvent event) {
+				final TimeButton tb = (TimeButton) event.getSource();
 				int index = getHourButtonIndex(tb);
 				getState().setMinuteIndex(index);
 				getState().setMinuteValue(tb.getValue());
+			}
+
+			public void onMouseUp(MouseUpEvent event) {
+				hideOnClick();
 			}
 		}
 

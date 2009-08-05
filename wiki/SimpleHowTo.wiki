@@ -154,3 +154,15 @@ buttonRPC.addClickListener(new ClickListener() {
 });
 
 }}}
+
+== And do not forget to tell Spring to use GWTSecuredHandler instead of GWTHandler ==
+
+{{{
+	<bean id="urlMapping" class="com.gwtincubator.security.server.GWTSecuredHandler">
+		<property name="mappings">
+			<map>
+				<entry key="/simple.rpc" value-ref="simpleService" />
+			</map>
+		</property>
+	</bean>
+}}}

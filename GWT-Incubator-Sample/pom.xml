@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.gwtincubator</groupId>
+  <artifactId>gwt-incubator-sample</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <packaging>war</packaging>
+
+  <name>gwt-incubator-sample</name>
+  <description>gwt-incubator-sample</description>
+
+  <properties>
+	<entry.point>Sample</entry.point>
+	<gwt.version>1.7.0</gwt.version>
+	<gwt.sl.version>0.1.5b</gwt.sl.version>
+	<gwt.incubator.version>1.0.1-SNAPSHOT</gwt.incubator.version>
+	<spring.version>2.5.6</spring.version>
+	<spring.security.version>2.0.4</spring.security.version>
+	<servlet.api.version>2.5</servlet.api.version>
+	<aspectj.version>1.6.1</aspectj.version>
+  </properties>
+
+  <dependencies>
+
+	<dependency>
+		<groupId>com.google.gwt</groupId>
+		<artifactId>gwt-user</artifactId>
+		<version>${gwt.version}</version>
+		<scope>provided</scope>
+	</dependency>
+
+	<dependency>
+		<groupId>com.google.gwt</groupId>
+		<artifactId>gwt-servlet</artifactId>
+		<version>${gwt.version}</version>
+		<scope>runtime</scope>
+	</dependency>
+	<dependency>
+		<groupId>com.google.gwt</groupId>
+		<artifactId>gwt-user</artifactId>
+		<version>${gwt.version}</version>
+		<scope>provided</scope>
+	</dependency>
+	<dependency>
+		<groupId>org.gwtwidgets</groupId>
+		<artifactId>gwt-sl</artifactId>
+		<version>${gwt.sl.version}</version>
+	</dependency>
+
+	<dependency>
+		<groupId>com.gwtincubator</groupId>
+		<artifactId>gwt-incubator-security</artifactId>
+		<version>${gwt.incubator.version}</version>
+	</dependency>
+
+  	<dependency>
+  	  <groupId>org.springframework</groupId>
+  	  <artifactId>spring-web</artifactId>
+  	  <version>${spring.version}</version>
+  	</dependency>
+
+  	<dependency>
+  	  <groupId>org.springframework</groupId>
+  	  <artifactId>spring-webmvc</artifactId>
+  	  <version>${spring.version}</version>
+  	</dependency>
+
+  	<dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-core</artifactId>
+  	  <version>${spring.version}</version>
+    </dependency>
+
+  	<dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+  	  <version>${spring.version}</version>
+    </dependency>
+
+    <dependency>
+  	  <groupId>org.springframework</groupId>
+  	  <artifactId>spring-context-support</artifactId>
+  	  <version>${spring.version}</version>
+  	</dependency>
+
+  	<dependency>
+  	  <groupId>org.springframework.security</groupId>
+  	  <artifactId>spring-security-core</artifactId>
+  	  <version>${spring.security.version}</version>
+  	</dependency>
+  
+  	<dependency>
+  	  <groupId>org.springframework.security</groupId>
+  	  <artifactId>spring-security-core-tiger</artifactId>
+  	  <version>${spring.security.version}</version>
+  	</dependency>
+  
+  	<dependency>
+  	  <groupId>org.springframework.security</groupId>
+  	  <artifactId>spring-security-acl</artifactId>
+  	  <version>${spring.security.version}</version>
+  	</dependency>
+  
+  	<dependency>
+  	  <groupId>org.springframework.security</groupId>
+  	  <artifactId>spring-security-taglibs</artifactId>
+  	  <version>${spring.security.version}</version>
+  	</dependency>
+  	<!-- End of Spring dependencies -->
+
+  	<dependency>
+  	  <groupId>javax.servlet</groupId>
+  	  <artifactId>servlet-api</artifactId>
+  	  <version>${servlet.api.version}</version>
+  	  <scope>provided</scope>
+  	</dependency>
+
+	<!-- AspectJ (due to Spring-AOP) -->
+	<dependency>
+		<groupId>org.aspectj</groupId>
+		<artifactId>aspectjrt</artifactId>
+		<version>${aspectj.version}</version>
+	</dependency>
+	<dependency>
+		<groupId>org.aspectj</groupId>
+		<artifactId>aspectjweaver</artifactId>
+		<version>${aspectj.version}</version>
+	</dependency>
+
+  </dependencies>
+
+  <build>
+  <pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <debug>false</debug>
+          <encoding>ISO-8859-15</encoding>
+          <fork>false</fork>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <configuration>
+          <encoding>ISO-8859-15</encoding>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <version>2.0-beta-6</version>
+        <configuration>
+          <locales>fr_FR</locales>
+          <inputEncoding>ISO-8859-15</inputEncoding>
+          <outputEncoding>ISO-8859-15</outputEncoding>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <forkMode>once</forkMode>
+        </configuration>
+      </plugin>
+    </plugins>
+  </pluginManagement>
+
+    <outputDirectory>war/WEB-INF/classes</outputDirectory>
+    <finalName>${artifactId}</finalName>
+
+	<resources>
+		<resource>
+	        <directory>${basedir}/src/main/java</directory>
+	        <includes>
+	          <include>**/*.java</include>
+	          <include>**/*.html</include>
+	        </includes>
+		</resource>
+		<resource>
+	        <directory>${basedir}/src/main/resources</directory>
+	        <includes>
+	          <include>**/*.*</include>
+	        </includes>
+	    </resource>
+	</resources>
+
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>gwt-maven-plugin</artifactId>
+        <version>1.1</version>
+        <configuration>
+			<noServer>false</noServer>
+         	<runTarget>com.gwtincubator.sample.${entry.point}/${entry.point}.html</runTarget>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>compile</goal>
+              <!--
+              <goal>resources</goal>
+              <goal>generateAsync</goal>
+              <goal>test</goal>
+              -->
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <!--
+      If you want to use the target/web.xml file mergewebxml produces,
+      tell the war plugin to use it.
+      Also, exclude what you want from the final artifact here.
+      -->
+      <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-war-plugin</artifactId>
+          <configuration>
+           <!--   <webXml>target/web.xml</webXml> -->
+           <!--   <warSourceExcludes>.gwt-tmp/**</warSourceExcludes> -->
+           <webXml>src/main/webapp/WEB-INF/web.xml</webXml>
+          </configuration>
+      </plugin>
+      <!-- -->
+
+    </plugins>
+  </build>
+
+</project>

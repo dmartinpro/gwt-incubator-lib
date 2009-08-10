@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app>
+
+	<servlet>
+	  <servlet-name>testServiceServlet</servlet-name>
+	  <servlet-class>
+	    com.gwtincubator.sample.server.hosted.TestServiceHosted
+	  </servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+	  <servlet-name>testServiceServlet</servlet-name>
+	  <url-pattern>/sample/gwt-rpc/test.rpc</url-pattern>
+	</servlet-mapping>
+
+  <!-- Default page to serve -->
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+  </welcome-file-list>
+
+</web-app>

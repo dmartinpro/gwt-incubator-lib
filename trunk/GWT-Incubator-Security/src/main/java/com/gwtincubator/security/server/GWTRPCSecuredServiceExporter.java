@@ -5,6 +5,8 @@ import java.util.Map;
 
 import javax.servlet.ServletContext;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.gwtwidgets.server.spring.GWTRPCServiceExporter;
 import org.springframework.security.SpringSecurityException;
 
@@ -21,6 +23,9 @@ public class GWTRPCSecuredServiceExporter extends GWTRPCServiceExporter {
 
 	/** serialVersionUID */
 	private static final long serialVersionUID = 2733022902422767233L;
+
+	/** logger. */
+	private final static Log LOGGER = LogFactory.getLog(GWTRPCSecuredServiceExporter.class);
 
 	public GWTRPCSecuredServiceExporter() {
 	}
@@ -85,9 +90,15 @@ public class GWTRPCSecuredServiceExporter extends GWTRPCServiceExporter {
 			if (cause1 != null && cause1 instanceof UnexpectedException) {
 				final Throwable preciousException = cause1.getCause();
 				if (preciousException != null && preciousException instanceof SpringSecurityException) {
-					final String failurePayload = RPC.encodeResponseForFailure(
+					String failurePayload = null;
+					try {
+						failurePayload = RPC.encodeResponseForFailure(
 							rpcRequest.getMethod(),
 							SecurityExceptionFactory.get((SpringSecurityException) preciousException));
+					} catch (final UnexpectedException ue) {
+						LOGGER.error("You may have forgotten to add a 'throws ApplicationSecurityException' declaration to your service interface.");
+						throw ue;
+					}
 					return failurePayload;
 				}
 			}

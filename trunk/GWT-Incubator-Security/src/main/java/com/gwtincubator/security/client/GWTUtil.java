@@ -29,7 +29,7 @@ public final class GWTUtil {
 	public static String getContextUrl () {
 	    if (GWT.getHostPageBaseURL().equals(GWT.getModuleBaseURL())) {
 	        final String ret = GWT.getHostPageBaseURL();
-	        int indexLast = ret.indexOf(GWT.getModuleName());
+	        int indexLast = ret.lastIndexOf(GWT.getModuleName());
 	        return ret.substring(0, indexLast).replaceAll(CONTEXT_URL_REGEXP, "");
 	    } else {
 	        return GWT.getHostPageBaseURL();

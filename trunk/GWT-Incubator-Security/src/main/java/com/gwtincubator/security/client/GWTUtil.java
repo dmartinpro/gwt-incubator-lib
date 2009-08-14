@@ -12,6 +12,8 @@ import com.google.gwt.core.client.GWT;
  */
 public final class GWTUtil {
 
+	private static final String CONTEXT_URL_REGEXP = "[http|https]+:\\/\\/[0-9a-zA-Z.]*[:]*[0-9]*";
+
 	/**
 	 * Constructor.
 	 * Private, as needed for an utility class.
@@ -28,7 +30,7 @@ public final class GWTUtil {
 	    if (GWT.getHostPageBaseURL().equals(GWT.getModuleBaseURL())) {
 	        final String ret = GWT.getHostPageBaseURL();
 	        int indexLast = ret.indexOf(GWT.getModuleName());
-	        return ret.substring(0, indexLast);
+	        return ret.substring(0, indexLast).replaceAll(CONTEXT_URL_REGEXP, "");
 	    } else {
 	        return GWT.getHostPageBaseURL();
 	    }

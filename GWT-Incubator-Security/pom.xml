@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.gwtincubator</groupId>
 	<artifactId>gwt-incubator-security</artifactId>
-	<version>1.0.1</version>
+	<version>1.0.2-SNAPSHOT</version>
 	<name>G.W.T - Security</name>
 	<packaging>jar</packaging>
 	<pluginRepositories>

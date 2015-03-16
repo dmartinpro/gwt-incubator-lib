@@ -1,0 +1,8 @@
+The ApplicationSecurityException is the parent class of two lovely children :
+
+  * AccessDeniedException
+  * AuthenticationException
+
+These classes are specialized exception that describes some kind of errors Spring Security can throw back when a secured resource is accessed without the right level of rights.
+
+You can use them to modify the behavior of your application when receiving a security error.

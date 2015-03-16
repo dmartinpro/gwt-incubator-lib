@@ -1,0 +1,3 @@
+# What is it? #
+
+This is the client side class that provides a specific method to manage security errors.

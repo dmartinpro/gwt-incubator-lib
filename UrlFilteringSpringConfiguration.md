@@ -1,0 +1,104 @@
+# Quick bootstrap : an easy sample #
+
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+    xmlns:beans="http://www.springframework.org/schema/beans"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+    					http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+    					http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+    					http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+                        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.4.xsd">
+
+	<beans:bean id="springSecurityFilterChain" class="org.springframework.security.util.FilterChainProxy">
+		<filter-chain-map path-type="ant">
+			<filter-chain pattern="/**" filters="httpSessionContextIntegrationFilter,logoutFilter,authenticationProcessingFilter,anonymousProcessingFilter,exceptionTranslationFilter,filterSecurityInterceptor" />
+		</filter-chain-map>
+	</beans:bean>
+
+	<authentication-manager alias="authenticationManager" />
+
+	<beans:bean id="authenticationProcessingFilter" class="org.springframework.security.ui.webapp.AuthenticationProcessingFilter">
+		<beans:property name="authenticationManager" ref="authenticationManager" />
+		<beans:property name="alwaysUseDefaultTargetUrl" value="true" />
+		<beans:property name="defaultTargetUrl" value="/" />
+		<beans:property name="filterProcessesUrl" value="/j_spring_security_check" />
+		<beans:property name="authenticationFailureUrl" value="/login.jsp?error=1" />
+	</beans:bean>
+
+	<beans:bean id="anonymousProcessingFilter" class="org.springframework.security.providers.anonymous.AnonymousProcessingFilter">
+		<beans:property name="key" value="anonymousKey" />
+		<beans:property name="userAttribute" value="anonymousUser,ROLE_ANONYMOUS" />
+	</beans:bean>
+
+	<beans:bean id="anonymousAuthenticationProvider"
+	    class="org.springframework.security.providers.anonymous.AnonymousAuthenticationProvider">
+	  <beans:property name="key" value="anonymousKey"/>
+	</beans:bean>
+
+	<beans:bean id="httpSessionContextIntegrationFilter" class="org.springframework.security.context.HttpSessionContextIntegrationFilter" />
+
+	<beans:bean id="logoutFilter" class="org.springframework.security.ui.logout.LogoutFilter">
+      <beans:constructor-arg value="/index.html"/> <!-- URL redirected to after logout -->
+      <beans:constructor-arg>
+         <beans:list>
+              <beans:bean class="org.springframework.security.ui.logout.SecurityContextLogoutHandler"/>
+         </beans:list>
+      </beans:constructor-arg>
+	</beans:bean>
+
+	<beans:bean id="filterSecurityInterceptor" class="org.springframework.security.intercept.web.FilterSecurityInterceptor">
+		<beans:property name="authenticationManager" ref="authenticationManager" />
+		<beans:property name="accessDecisionManager" ref="accessDecisionManager" />
+		<beans:property name="objectDefinitionSource">
+			<filter-invocation-definition-source>
+		        <intercept-url pattern="/rpc/**" access="ROLE_USER" />
+		        <intercept-url pattern="/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />
+			</filter-invocation-definition-source>
+		</beans:property>
+	</beans:bean>
+
+	<beans:bean id="accessDecisionManager" class="org.springframework.security.vote.AffirmativeBased">
+		<beans:property name="allowIfAllAbstainDecisions" value="false" />
+		<beans:property name="decisionVoters">
+			<beans:list>
+				<beans:bean class="org.springframework.security.vote.RoleVoter" />
+				<beans:bean class="org.springframework.security.vote.AuthenticatedVoter" />
+			</beans:list>
+		</beans:property>
+	</beans:bean>
+
+	<util:set id="gwtPathsSet" 
+  		set-class="java.util.HashSet"
+      	value-type="java.lang.String">
+             <beans:value>/rpc/**</beans:value>
+    </util:set>
+
+	<beans:bean id="exceptionTranslationFilter" class="com.gwtincubator.security.server.GWTExceptionTranslationFilter">
+		<beans:property name="authenticationEntryPoint" ref="authenticationProcessingFilterEntryPoint" />
+		<beans:property name="gwtPaths" ref="gwtPathsSet" />
+	</beans:bean>
+
+	<beans:bean id="authenticationProcessingFilterEntryPoint"
+	        class="org.springframework.security.ui.webapp.AuthenticationProcessingFilterEntryPoint">
+	  <beans:property name="loginFormUrl" value="/login.jsp"/>
+	  <beans:property name="forceHttps" value="false"/>
+	</beans:bean>
+
+    <authentication-provider>
+        <user-service>
+            <user name="rod" password="koala" authorities="ROLE_SUPERVISOR, ROLE_USER, ROLE_TELLER" />
+	        <user name="dianne" password="emu" authorities="ROLE_USER,ROLE_TELLER" />
+            <user name="scott" password="wombat" authorities="ROLE_USER" />
+            <user name="peter" password="opal" authorities="ROLE_USER" />
+	    </user-service>
+	</authentication-provider>
+
+	<beans:bean id="SimpleRPCService" class="com.gwtsamplewebapp.ui.server.SimpleRPCServiceImpl" />
+
+</beans:beans>
+```

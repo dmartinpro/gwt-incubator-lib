@@ -1,0 +1,220 @@
+# How it is supposed to work #
+
+The package provides several things that should be describe first :
+
+  * An extended AsyncCallback named SecuredAsyncCallback
+  * A new GWTHandler (@see GWT-SL documentation) called GWTSecuredHandler
+  * A set of exceptions that translates spring exceptions types in a GWT equivalence
+
+Now, I can explain how all this cool stuff works :
+
+First you have to set up a Spring Security configuration. You can choose to protect your RPC calls with the different strategies Spring Security allows :
+
+  * through AOP (Annotation @Secured or pointcut definition : <protect-pointcut .../> )
+  * through URL filtering (<intercept-url... />)
+
+Both solutions work but annotation is my preferred choice.
+
+Once this is done, you have to extend SecuredAsyncCallback on every RPC call to be able to use the security management. That way, you'll have to implement 3 methods instead of the 2 (onSuccess and onFailure) :
+
+  * onSuccess : after all, this is the most important case isn't it ?
+  * onSecurityException(final ApplicationSecurityException exception)
+  * onOtherException(final Throwable exception)
+
+You can easily understand what the meaning of each of these methods is, can't you ?
+
+The second important point is to declare for each protected method of your RemoteService interface ApplicationSecurityException an exception that could be thrown. Yes, I know, that can be a little bit annoying and invasive, but hey, I didn't find any other way to do. Feel free to give me advices on this point :)
+
+Example :
+```
+public interface SimpleRPCService extends RemoteService {
+
+	@Secured({"ROLE_SUPERVISOR"})
+	MyObject getData() throws ApplicationSecurityException;
+
+}
+```
+
+
+It's time to go back to the solution you choose to protect your so precious resources with Spring Security. Let's detail this point a little bit more.
+In order to be able to access your protected resources, the user must be authenticated AND have enough privilege. Let's consider the user is already authenticated before accessing your remote service (RPC). One easy solution for that is to filter the access to the EntryPoint in order to force him to authenticate before doing anything else.
+
+This can be achieved with this type of configuration (if your EntryPoint html file is under /gwt/) :
+```
+    <http entry-point-ref="yourPotentialSpecificProcessingFilterEntryPoint">
+        <intercept-url pattern="/gwt/**" access="ROLE_USER" />
+        [...]
+    </http>
+```
+
+That way, when accessing for the first time anything behind /gwt/**, Spring Security will redirect you to the login page.**
+
+Now, let's describe the two distincts methods :
+
+  * AOP
+
+You can use for this method a pointcut definition to protect your service, like in the following example :
+
+```
+    <global-method-security secured-annotations="disabled" jsr250-annotations="disabled">
+	<protect-pointcut expression="execution(* com.gwtsamplewebapp.ui.server.SimpleRPCServiceImpl.get*(..))" access="ROLE_SUPERVISOR" />
+    </global-method-security>
+```
+
+and use a remote service definition like this one :
+```
+public interface SimpleRPCService extends RemoteService {
+
+    MyObject getData() throws ApplicationSecurityException;
+
+}
+```
+
+
+**OR** enable annotations to protect your service, as it is described below :
+
+```
+    <global-method-security secured-annotations="enabled" />
+```
+NOTE : you can choose between spring or jsr250, the example only shows spring annotation activation
+
+and add the @Secured annotation to your service definition :
+
+```
+public interface SimpleRPCService extends RemoteService {
+
+    @Secured({"ROLE_SUPERVISOR"})
+    MyObject getData() throws ApplicationSecurityException;
+
+}
+```
+
+And that's enough !
+
+
+  * Using the URL filtering
+
+Things are not as easy as it seems here. Because URL filtering checks if the user accessing a resource is allowed or not **before** anything else AND independently if it's a specific RPC call or anything else, we should provide a solution that is smart enough to deal with this !
+
+Here is how I decided to solve this issue.
+First, when accessing a resource that's not allowed, the ExceptionTranslationFilter is used to determine what was the reason of the error and deal with it. It means if the user isn't authenticated (or is authenticated but is ANONYMOUS), a redirection to the login page will occur, otherwise the management of the error is delegated to a handler.
+
+I decided to override the ExceptionTranslationFilter and enhance its behavior. Here is how it should work :
+If an exception (I mean SpringSecurityException) occurs, the newly created class should check if the URL that generated this exception was related to a RPC call or not.
+
+If so, the original behavior should change to something specific : either send a message for the RPC call or send something else that could be processed by the callback class.
+Actually, SecuredAsyncCallback can manage, besides RPC responses, XML responses that follow this pattern :
+
+```
+<security>
+  <code>XXX</code>
+  <message>XXX</message>
+  <exception>XXX</exception>
+</security>
+```
+
+In order to determine if a request comes from a RPC call or anything else, the new ExceptionTranslationFilter - called GWTExceptionTranslationFilter - must rely on pattern analysis. That way, if a request matches one of the patterns provided, the answer will be different from the original one.
+
+
+It's time now to show how it works :
+
+
+First, you have to know that it's not possible to supply a custom ExceptionTranslationFilter while using the namespace (yep, really sad indeed!). So, you must define the Spring Security configuration the old way ; that means defining every single bean...
+(In fact, that can be possible but you must not rely on it...)
+
+Here is a sample of a Spring Security configuration :
+
+```
+[...]
+	<beans:bean id="filterSecurityInterceptor" class="org.springframework.security.intercept.web.FilterSecurityInterceptor">
+		<beans:property name="authenticationManager" ref="authenticationManager" />
+		<beans:property name="accessDecisionManager" ref="accessDecisionManager" />
+		<beans:property name="objectDefinitionSource">
+			<filter-invocation-definition-source>
+		        <intercept-url pattern="/rpc/**" access="ROLE_USER" />
+		        <intercept-url pattern="/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />
+			</filter-invocation-definition-source>
+		</beans:property>
+	</beans:bean>
+
+	<util:set id="gwtPathsSet" 
+  		set-class="java.util.HashSet"
+      	value-type="java.lang.String">
+             <beans:value>/rpc/**</beans:value>
+    </util:set>
+
+	<beans:bean id="exceptionTranslationFilter" class="com.gwtincubator.security.server.GWTExceptionTranslationFilter">
+		<beans:property name="authenticationEntryPoint" ref="authenticationProcessingFilterEntryPoint" />
+		<beans:property name="gwtPaths" ref="gwtPathsSet" />
+	</beans:bean>
+[...]
+```
+
+Let's focus on the important parts in it, viz. the `objectDefinitionSource` property of the FilterSecurityInterceptor and the GWTExceptionTranslationFilter bean declaration.
+
+You have to define in the first one every filter you want to add to your application. There is nothing special here.
+Now, let's have a look on the GWTExceptionTranslationFilter. This bean should have a `gwtPaths` definition, matching the RPC calls URL. You can also specify the value for `forbiddenCodeHttpResponse`. If set to true, it enables the alternate response (non RPC serialized) ; see further for more information. The other interesting parameter is `matcher` if you want to use a non Ant style syntax for your patterns.
+
+Once this configuration done, you're ready to use the URL filtering on your asynchronous calls.
+
+You now just have to define your Remote Service to be 'Security compliant' by adding the ApplicationSecurityException declaration to your methods:
+```
+public interface SimpleRPCService extends RemoteService {
+
+    MyObject getData() throws ApplicationSecurityException;
+
+}
+```
+
+
+Let's detail a little bit more how the alternate response works. If `forbiddenCodeHttpResponse` is set to true, the GWTExceptionTranslationFilter will return a 403 error code response. As you may know, you can map this error to a specific page in the web.xml file by adding these lines:
+
+```
+    <error-page>
+        <error-code>403</error-code>
+        <location>/403.jsp</location>
+    </error-page>
+```
+
+where the 403.jsp file looks like:
+```
+<%@ page session="false" isErrorPage="true" %><?xml version="1.0" encoding="UTF-8"?>
+<security>
+    <code>${requestScope["javax.servlet.error.status_code"]}</code>
+    <message>${requestScope["javax.servlet.error.message"]}</message>
+    <exception>${requestScope["javax.servlet.error.exception_type"]}</exception>
+</security>
+```
+
+
+---
+
+
+And that's all for the server side part of the work.
+Now, let's describe the client part and more precisely, how to use the SecuredAsyncCallback class.
+
+
+---
+
+
+Here is an example :
+
+```
+ServicesFactory.getSimpleRpc().getData(new SecuredAsyncCallback<MyObject>() {
+    	public void onSecurityException(ApplicationSecurityException exception) {
+    		Window.alert("Security exception catched.\n" + exception.getMessage());
+    	}
+
+    	public void onOtherException(Throwable exception) {
+    		Window.alert("The operation failed : the service encountered an internal issue.\n" + exception);
+    	}
+
+    	public void onSuccess(MyObject object) {
+    		Window.alert("Success : " + object);
+    	}
+});
+```
+
+
+So, it's time to give it a try right now !!
+If you need more information about Spring Security configuration and GWT-SL use, see this page : SpringSecurityBasicConf.
